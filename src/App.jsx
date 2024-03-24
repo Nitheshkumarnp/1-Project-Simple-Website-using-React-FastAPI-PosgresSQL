@@ -10,7 +10,7 @@ function App() {
     setError(null);
 
     try {
-      const response = await fetch('/quotes');
+      const response = await fetch('https://fastapi-demo-5sid.onrender.com/');
       if (!response.ok) {
         throw new Error('Failed to fetch quotes');
       }
