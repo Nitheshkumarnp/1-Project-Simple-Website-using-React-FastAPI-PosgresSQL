@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [quotes, setQuotes] = useState([]);
+  const [details, setDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchQuotes = async () => {
+  const fetchDetails = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('https://fastapi-demo-5sid.onrender.com/');
+      const response = await fetch('https://working-fastapi.onrender.com/details');
       if (!response.ok) {
         throw new Error('Failed to fetch quotes');
       }
       const data = await response.json();
-      setQuotes(data);
+      setDetails(data);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -23,26 +23,53 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    fetchQuotes();
-  }, []);
+  const resetDetails = async () => {
+    setIsLoading(false);
+    setError(null);
+    setDetails([]);
+  };
+
+  // commented because of initial load of page itself the quotes are coming
+  // useEffect(() => {
+  //   fetchDetails();
+  // }, []);
 
   return (
     <div>
-      <h1>Random Quotes</h1>
-      <button onClick={fetchQuotes} disabled={isLoading}>
-        {isLoading ? 'Loading...' : 'Get Quotes'}
+      <h1>Details fetching from posgres SQL</h1>
+      <button onClick={fetchDetails} disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Get Data'}
+      </button>
+      <button onClick={resetDetails} disabled={details.length == 0}>
+        Reset
       </button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {quotes.length > 0 && (
-        <ul>
-          {quotes.map((quote) => (
-            <li key={quote.quote}>
-              "{quote.quote}" - {quote.author}
-            </li>
+      {details.length > 0 ?
+        <div>
+          {details.map((data, index1) => (
+            <div>
+              {data.map((da, index2) => {
+                let first;
+                if(index1 == 0) {
+                  first = 'A'
+                } else {
+                  first = 'B'
+                }
+                let second;
+                if(index2 == 0) {
+                  second = 'id'
+                } else if (index2 == 1) { 
+                  second = 'name'
+                } else if (index2 == 2) { 
+                  second = 'email id'
+                } else {
+                  second = 'password'
+                }
+                return <p>{first} - {second} - {da}</p>
+              })}
+            </div>
           ))}
-        </ul>
-      )}
+        </div> : null}
     </div>
   );
 }
